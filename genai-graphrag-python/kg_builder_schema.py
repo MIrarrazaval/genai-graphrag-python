@@ -29,11 +29,44 @@ embedder = OpenAIEmbeddings(
 
 text_splitter = FixedSizeSplitter(chunk_size=500, chunk_overlap=100)
 
+
 NODE_TYPES = [
     "Technology",
     "Concept",
     "Example",
     "Process",
+    "Challenge",
+    "Benefit",
+    {
+        "label": "Resource",
+        "description": "A related learning resource such as a book, article, video, or course.",
+        "properties": [
+            {"name": "name", "type": "STRING", "required": True}, 
+            {"name": "url", "type": "STRING"}
+        ]
+    },
+]
+
+RELATIONSHIP_TYPES = [
+    "RELATED_TO",
+    "PART_OF",
+    "USED_IN",
+    "LEADS_TO",
+    "HAS_CHALLENGE",
+    "LEADS_TO",
+    "CITES"
+]
+
+PATTERNS = [
+    ("Technology", "RELATED_TO", "Technology"),
+    ("Concept", "RELATED_TO", "Technology"),
+    ("Example", "USED_IN", "Technology"),
+    ("Process", "PART_OF", "Technology"),
+    ("Technology", "HAS_CHALLENGE", "Challenge"),
+    ("Concept", "HAS_CHALLENGE", "Challenge"),
+    ("Technology", "LEADS_TO", "Benefit"),
+    ("Process", "LEADS_TO", "Benefit"),
+    ("Resource", "CITES", "Technology"),
 ]
 
 kg_builder = SimpleKGPipeline(
@@ -45,10 +78,11 @@ kg_builder = SimpleKGPipeline(
     text_splitter=text_splitter,
     schema={
         "node_types": NODE_TYPES,
+        "relationship_types": RELATIONSHIP_TYPES,
+        "patterns": PATTERNS
     },
 )
 
 pdf_file = "./genai-graphrag-python/data/genai-fundamentals_1-generative-ai_1-what-is-genai.pdf"
 result = asyncio.run(kg_builder.run_async(file_path=pdf_file))
 print(result.result)
-

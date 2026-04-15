@@ -38,7 +38,7 @@ rag = GraphRAG(
     llm=llm
 )
 
-query_text = "How many technologies are mentioned in the knowledge graph?"
+query_text = "What entities exist in the knowledge graph?"
 
 response = rag.search(
     query_text=query_text,

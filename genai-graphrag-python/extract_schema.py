@@ -14,7 +14,7 @@ schema_extractor = SchemaFromTextExtractor(
 )
 
 text = """
-Neo4j is a graph database management system (GDBMS) developed by Neo4j Inc.
+Godel's incompleteness theorum relies on a statement which represents itself as a number theory question and asserts its own falsehood.
 """
 
 # Extract the schema from the text

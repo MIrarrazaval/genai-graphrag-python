@@ -22,7 +22,25 @@ embedder = OpenAIEmbeddings(model="text-embedding-ada-002")
 
 # Define retrieval query
 retrieval_query = """
-RETURN node.text as text, score
+MATCH (node)-[:FROM_DOCUMENT]->(d)-[:PDF_OF]->(lesson)
+RETURN
+    node.text as text, score,
+    lesson.url as lesson_url,
+    collect { 
+        MATCH (node)<-[:FROM_CHUNK]-(entity)-[r]->(other)-[:FROM_CHUNK]->()
+        WITH toStringList([
+            labels(entity)[2], 
+            entity.name, 
+            entity.type, 
+            entity.description, 
+            type(r), 
+            labels(other)[2], 
+            other.name, 
+            other.type, 
+            other.description
+            ]) as values
+        RETURN reduce(acc = "", item in values | acc || coalesce(item || ' ', ''))
+    } as associated_entities
 """
 
 # Create retriever
